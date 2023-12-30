@@ -1,10 +1,14 @@
 import 'dotenv/config'
 import express from 'express'
-import configViewEngine from './configs/viewEngine'
+import process from 'process'
+import configViewEngine from './config/viewEngine'
 import initWebRoutes from './routes/web'
 
 const app = express()
 const PORT = process.env.PORT || 8080
+
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
 
 configViewEngine(app)
 
