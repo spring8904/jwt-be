@@ -1,20 +1,9 @@
 import bcryptjs from 'bcryptjs'
-import bluebird from 'bluebird'
-import mysql from 'mysql2/promise'
-// import db from '../models'
-
-const db = {
-  host: 'localhost',
-  user: 'root',
-  database: 'jwt',
-  Promise: bluebird,
-}
+import { User } from '../models'
 
 export const getUsers = async () => {
   try {
-    const connection = await mysql.createConnection(db)
-    const [rows] = await connection.execute('SELECT * FROM users')
-    return rows
+    return await User.findAll()
   } catch (error) {
     console.log(error)
   }
@@ -26,19 +15,12 @@ const hash = (string) => {
 }
 
 export const createUser = async (username, email, password) => {
-  const hashPassword = hash(password)
   try {
-    const connection = await mysql.createConnection(db)
-    await connection.execute(
-      'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
-      [username, email, hashPassword],
-    )
-
-    // await db.users.create({
-    //   username,
-    //   email,
-    //   password: hashPassword,
-    // })
+    await User.create({
+      username,
+      email,
+      password: hash(password),
+    })
   } catch (error) {
     console.log(error)
   }
@@ -46,8 +28,11 @@ export const createUser = async (username, email, password) => {
 
 export const deleteUser = async (id) => {
   try {
-    const connection = await mysql.createConnection(db)
-    await connection.execute('DELETE FROM users WHERE `users`.`id` = ?', [id])
+    await User.destroy({
+      where: {
+        id,
+      },
+    })
   } catch (error) {
     console.log(error)
   }
@@ -55,16 +40,11 @@ export const deleteUser = async (id) => {
 
 export const getUserById = async (id) => {
   try {
-    const connection = await mysql.createConnection(db)
-    const [rows] = await connection.execute(
-      'SELECT * FROM users WHERE `users`.`id` = ?',
-      [id],
-    )
-    if (rows.length === 0) {
-      throw new Error('User not found.')
-    } else {
-      return rows[0]
-    }
+    return await User.findOne({
+      where: {
+        id,
+      },
+    })
   } catch (error) {
     console.log(error)
   }
@@ -72,10 +52,16 @@ export const getUserById = async (id) => {
 
 export const updateUser = async (id, username, email) => {
   try {
-    const connection = await mysql.createConnection(db)
-    await connection.execute(
-      'UPDATE `users` SET `username` = ?, `email` = ? WHERE `users`.`id` = ?',
-      [username, email, id],
+    await User.update(
+      {
+        username,
+        email,
+      },
+      {
+        where: {
+          id,
+        },
+      },
     )
   } catch (error) {
     console.log(error)
