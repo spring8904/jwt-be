@@ -1,15 +1,13 @@
-/* eslint-disable no-undef */
 'use strict'
-const { Model } = require('sequelize')
-module.exports = (sequelize, DataTypes) => {
+import { Model } from 'sequelize'
+export default (sequelize, DataTypes) => {
   class User extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate() {
-      // define association here
+    static associate(models) {
+      User.belongsTo(models.Group)
+
+      User.belongsToMany(models.Project, {
+        through: 'ProjectUsers',
+      })
     }
   }
   User.init(
@@ -17,6 +15,10 @@ module.exports = (sequelize, DataTypes) => {
       username: DataTypes.STRING,
       email: DataTypes.STRING,
       password: DataTypes.STRING,
+      address: DataTypes.STRING,
+      gender: DataTypes.STRING,
+      phone: DataTypes.STRING,
+      groupId: DataTypes.INTEGER,
     },
     {
       sequelize,

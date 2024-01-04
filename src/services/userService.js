@@ -1,8 +1,20 @@
 import bcryptjs from 'bcryptjs'
-import { User } from '../models'
+import { User, Role, Group, Project } from '../models'
 
 export const getUsers = async () => {
   try {
+    const data = await Group.findAll({
+      attributes: ['id', 'name'],
+      include: {
+        model: Role,
+        attributes: ['id', 'url'],
+      },
+      raw: true,
+      nest: true,
+    })
+
+    console.log(data)
+
     return await User.findAll()
   } catch (error) {
     console.log(error)
