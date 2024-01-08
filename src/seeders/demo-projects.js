@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 'use strict'
 
 /** @type {import('sequelize-cli').Migration} */
@@ -34,6 +33,6 @@ export async function up(queryInterface) {
     {},
   )
 }
-export async function down() {
+export async function down(queryInterface) {
   return queryInterface.bulkDelete('Projects', null, {})
 }
